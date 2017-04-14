@@ -1,0 +1,9 @@
+[submodule "thirdparty/mcu.cmake"]
+	path = thirdparty/mcu.cmake
+	url = https://github.com/trygvis/mcu.cmake
+[submodule "thirdparty/STM32F10x_StdPeriph_Lib_V3.5.0"]
+	path = thirdparty/STM32F10x_StdPeriph_Lib_V3.5.0
+	url = https://github.com/trygvis/STM32F10x_StdPeriph_Lib_V3.5.0
+[submodule "thirdparty/tinyprintf"]
+	path = thirdparty/tinyprintf
+	url = https://github.com/trygvis/tinyprintf

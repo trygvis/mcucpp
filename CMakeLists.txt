@@ -1,15 +1,14 @@
 cmake_minimum_required(VERSION 3.6)
 
-project(mcu.cmake-test C CXX ASM)
+project(mcucpp C CXX ASM)
 
-include_directories(src embxx)
+include_directories(include)
 add_executable(tests
-        test/tests.cpp
-        test/catch.hpp
+    test/tests.cpp
+    test/catch.hpp
 
-        src/mcu/nonew/function.h
-        test/function-test.cpp
+    include/mcu/nonew/function.h
+    test/function-test.cpp
 
-        src/mcu/nonew/queue.h
-        test/queue-test.cpp
-        )
+    include/mcu/nonew/queue.h
+    test/queue-test.cpp)
