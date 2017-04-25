@@ -107,6 +107,8 @@ TEST_CASE("push and pop") {
 
     q.push_back("2");
     q.push_back("3");
+    REQUIRE(q.front() == "2");
+    REQUIRE(q.back() == "3");
     q.pop_back();
     require_all(q, "2");
 
@@ -125,4 +127,24 @@ TEST_CASE("push and pop") {
     q.push_back("7");
     require_all(q, "5", "6", "7");
     print(q);
+}
+
+TEST_CASE("push and pop 2") {
+    queue_t<3> q;
+
+    q.push_back("1");
+    REQUIRE(q.front() == "1");
+    q.pop_front();
+
+    q.push_back("2");
+    REQUIRE(q.front() == "2");
+    q.pop_front();
+
+    q.push_back("3");
+    REQUIRE(q.front() == "3");
+    q.pop_front();
+
+    q.push_back("4");
+    REQUIRE(q.front() == "4");
+    q.pop_front();
 }
