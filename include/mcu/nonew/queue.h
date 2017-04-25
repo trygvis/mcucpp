@@ -4,6 +4,7 @@
 #include <numeric>
 #include <limits>
 
+extern "C"
 __attribute__((noreturn))
 int halt();
 
@@ -22,7 +23,7 @@ struct mcu_default_platform {
 template<typename T, size_t Capacity, typename platform = mcu_default_platform>
 class queue {
 public:
-    typedef ssize_t idx_t;
+    typedef int8_t idx_t;
     typedef T element_type;
 
     static_assert(std::numeric_limits<idx_t>::max() >= Capacity, "The selected index type is too small");
@@ -34,8 +35,10 @@ private:
     T array[Capacity];
     idx_t head, size_;
 
-    idx_t head_idx() {
-        return head;
+    __always_inline
+    idx_t wrap(int idx) const {
+        int value =idx >= Capacity ? idx_t(idx - Capacity) : idx;
+        return static_cast<idx_t>(value);
     }
 
     idx_t logical_to_physical(idx_t i) const {
@@ -43,15 +46,7 @@ private:
 
         idx_t idx = head + i;
 
-        return idx >= Capacity ? idx_t(idx - Capacity) : idx;
-    }
-
-    idx_t tail_idx() const {
-        platform::check(size_ < Capacity);
-
-        idx_t tail = head + size_ - 1;
-
-        return tail >= Capacity ? idx_t(tail - Capacity) : tail;
+        return wrap(idx);
     }
 
     idx_t after_tail_idx() const {
@@ -59,7 +54,7 @@ private:
 
         idx_t tail = head + size_;
 
-        return tail >= Capacity ? idx_t(tail - Capacity) : tail;
+        return wrap(tail);
     }
 
 public:
@@ -75,7 +70,7 @@ public:
     }
 
     bool is_full() const {
-        return size_ == Capacity;
+        return size_ >= Capacity;
     }
 
     idx_t size() const {
@@ -121,7 +116,7 @@ public:
     void pop_front() {
         platform::check(!is_empty());
 
-        head++;
+        head = wrap(head + 1);
         size_--;
         platform::check(size_ >= 0);
     }
