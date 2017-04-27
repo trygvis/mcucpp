@@ -20,13 +20,14 @@ struct mcu_default_platform {
     }
 };
 
-template<typename T, size_t Capacity, typename platform = mcu_default_platform>
+template<typename T, size_t Capacity, typename idx_t = int8_t, typename platform = mcu_default_platform>
 class queue {
+    static_assert(std::numeric_limits<idx_t>::max() >= Capacity, "The index type is too small for the given capacity");
+    static_assert(std::numeric_limits<idx_t>::is_signed, "The index type must be signed");
+
 public:
-    typedef int8_t idx_t;
     typedef T element_type;
 
-    static_assert(std::numeric_limits<idx_t>::max() >= Capacity, "The selected index type is too small");
     static const idx_t capacity = static_cast<idx_t>(Capacity);
 
 private:
