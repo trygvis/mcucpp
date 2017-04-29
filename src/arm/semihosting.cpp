@@ -2,7 +2,7 @@
 
 namespace semihosting {
 
-volatile bool _enabled;
+volatile bool _enabled = false;
 
 void disable()
 {
