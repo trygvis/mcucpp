@@ -8,6 +8,7 @@ __attribute__((used))
 int puts(const char *s)
 {
     send_command(SemihostingCmd::SYS_WRITE0, (void *) s);
-    putchar('\n');
+    char eol = '\n';
+    send_command(SemihostingCmd::SYS_WRITEC, &eol);
     return 1;
 }

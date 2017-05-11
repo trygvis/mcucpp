@@ -12,7 +12,7 @@ list(APPEND SHARED_SOURCES
 
     ../include/mcu/arm/semihosting.h
     ../src/arm/semihosting.cpp
-    ../src/arm/semihosting-putc.cpp
+    ../src/arm/semihosting-puts.cpp
     ../src/arm/semihosting-putchar.cpp
 
     ../thirdparty/tinyprintf/tinyprintf.c
