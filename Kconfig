@@ -1,0 +1,44 @@
+mainmenu "MCU C++ Configuration"
+
+choice PRINTF_TARGET
+    prompt "printf() target"
+
+    config PRINTF_TARGET_SEMIHOSTING
+        bool "Semihosting"
+
+    config PRINTF_TARGET_UART
+        bool "UART"
+
+endchoice
+
+config TINYPRINTF
+  bool "Enable tinyprintf"
+
+menu "tinyprintf settings"
+  depends on TINYPRINTF
+
+config TINYPRINTF_PRINTF
+  bool "Enable printf() implementation with tinyprintf"
+  default y
+
+config TINYPRINTF_SNPRINTF
+  bool "Enable snprintf() implementation with tinyprintf"
+  default y
+
+endmenu
+
+config SEMIHOSTING
+  bool "Enable semihosting"
+
+menu "Semihosting settings"
+  depends on SEMIHOSTING
+
+config SEMIHOSTING_PUTCHAR
+  bool "Enable putchar() implementation with semihosting"
+  default y
+
+config SEMIHOSTING_PUTS
+  bool "Enable puts() implementation with semihosting"
+  default y
+
+endmenu
