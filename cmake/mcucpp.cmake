@@ -1,6 +1,8 @@
 set(MCUCPP_PREFIX ${CMAKE_CURRENT_LIST_DIR}/../)
 get_filename_component(MCUCPP_PREFIX ${MCUCPP_PREFIX} ABSOLUTE)
 
+find_program(KCONFIG_PROGRAM NAMES kconfig)
+
 function(_mcucpp_load_dotconfig TARGET)
   get_target_property(DOTCONFIG "${TARGET}" DOTCONFIG)
 
@@ -17,7 +19,6 @@ function(_mcucpp_load_dotconfig TARGET)
 endfunction()
 
 function(mcucpp_configure_target)
-
   set(options)
   set(oneValueArgs TARGET DOTCONFIG)
   set(multiValueArgs)
@@ -40,13 +41,18 @@ function(mcucpp_configure_target)
 
   set(KCONFIG_CMAKE ${CMAKE_BINARY_DIR}/mcucpp/${T}-kconfig.cmake)
 
-  add_custom_target(${T}-kconfig
-    DEPENDS "${DOTCONFIG}"
-    BYPRODUCTS "${DOTCONFIG}"
-    COMMAND kconfig mconf ${MCUCPP_PREFIX}/Kconfig
-    COMMAND cmake -E touch "${KCONFIG_CMAKE}"
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    USES_TERMINAL)
+  if (NOT KCONFIG_PROGRAM)
+      message("Could not find kconfig-frontend in PATH, won't create targets for launching kconfig.")
+      message("This is not a problem unless you need to change the configuration. See the docs for more info: ${MCUCPP_PREFIX}/doc/kconfig.md")
+  else()
+    add_custom_target(${T}-kconfig
+      DEPENDS "${DOTCONFIG}"
+      BYPRODUCTS "${DOTCONFIG}"
+      COMMAND "${KCONFIG_PROGRAM}" mconf ${MCUCPP_PREFIX}/Kconfig
+      COMMAND cmake -E touch "${KCONFIG_CMAKE}"
+      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+      USES_TERMINAL)
+  endif ()
 
   file(WRITE "${KCONFIG_CMAKE}" "# Marker file.
 # Touched by the $target-kconfig goal to get CMake to reload the configuration
