@@ -82,7 +82,7 @@ function(mcucpp_process)
   set(multiValueArgs)
   cmake_parse_arguments(ARGS "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-  set(INCLUDE_DIRECTORIES "wat")
+  set(INCLUDE_DIRECTORIES "")
   set(HEADERS "")
   set(SOURCES "")
 
