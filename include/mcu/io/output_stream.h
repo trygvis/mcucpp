@@ -9,6 +9,10 @@ namespace io {
 
 class output_stream {
 public:
+    size_t write(char c) {
+        return write(reinterpret_cast<uint8_t *>(&c), 1);
+    }
+
     size_t write(const char *string) {
         size_t size = strlen(string);
         auto *s1 = const_cast<char *>(string);

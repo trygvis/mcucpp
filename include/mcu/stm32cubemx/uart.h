@@ -1,5 +1,6 @@
 #pragma once
 
+#include "stm32f1xx_hal_dma.h"
 #include "stm32f1xx_hal_uart.h"
 #include "mcu/io/output_stream.h"
 
@@ -17,6 +18,11 @@ public:
 
     using mcu::io::output_stream::write;
     size_t write(const uint8_t *data, size_t size) override;
+
+    __always_inline
+    bool tx_busy() {
+        return HAL_UART_GetState(handle_) & HAL_UART_STATE_BUSY_TX;
+    }
 
 private:
     UART_HandleTypeDef *handle_;
