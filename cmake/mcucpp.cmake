@@ -45,11 +45,19 @@ function(mcucpp_configure_target)
       message("Could not find kconfig-frontend in PATH, won't create targets for launching kconfig.")
       message("This is not a problem unless you need to change the configuration. See the docs for more info: ${MCUCPP_PREFIX}/doc/kconfig.md")
   else()
+    get_filename_component(KCONFIG_DIR "${KCONFIG_PROGRAM}" DIRECTORY)
+
+    if (WIN32)
+      set(PATH "${KCONFIG_DIR};$ENV{PATH}")
+    else ()
+      set(PATH "${KCONFIG_DIR}:$ENV{PATH}")
+    endif ()
+
     add_custom_target(${T}-kconfig
       DEPENDS "${DOTCONFIG}"
       BYPRODUCTS "${DOTCONFIG}"
-      COMMAND "${KCONFIG_PROGRAM}" mconf ${MCUCPP_PREFIX}/Kconfig
-      COMMAND cmake -E touch "${KCONFIG_CMAKE}"
+      COMMAND ${CMAKE_COMMAND} -E env "PATH=${PATH}" kconfig mconf ${MCUCPP_PREFIX}/Kconfig
+      COMMAND ${CMAKE_COMMAND} -E touch "${KCONFIG_CMAKE}"
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
       USES_TERMINAL)
   endif ()
