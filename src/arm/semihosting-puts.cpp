@@ -1,5 +1,4 @@
 #include <mcu/arm/semihosting.h>
-#include <cstdio>
 
 using namespace semihosting;
 
