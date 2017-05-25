@@ -5,7 +5,7 @@
 #include "mcu/io/output_stream.h"
 
 namespace mcu {
-namespace stm32cubemx {
+namespace stm32cube {
 namespace uart {
 
 class uart_port : public mcu::io::output_stream {
@@ -29,5 +29,5 @@ private:
 };
 
 } // namespace uart
-} // namespace stm32cubemx
+} // namespace stm32cube
 } // namespace mcu

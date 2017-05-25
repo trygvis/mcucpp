@@ -4,7 +4,7 @@
 #include "mcu/io/output_stream.h"
 
 namespace mcu {
-namespace stm32cubemx {
+namespace stm32cube {
 namespace debug {
 
 template<size_t BufferSize>
@@ -42,5 +42,5 @@ size_t dbg<BufferSize>::write(const uint8_t *data, size_t size) {
 }
 
 } // namespace debug
-} // namespace stm32cubemx
+} // namespace stm32cube
 } // namespace mcu

@@ -45,21 +45,26 @@ choice STDIO_TARGET
         depends on SEMIHOSTING
         bool "Semihosting"
 
-    config STDIO_TARGET_UART
-        bool "UART"
+    config STDIO_TARGET_STM32CUBE_UART
+        bool "STM32Cube UART"
 
 endchoice
 
-choice STDIO_TARGET_UART_PORT
-    prompt "UART port"
-    depends on STDIO_TARGET_UART
+choice
+    prompt "STM32Cube UART port"
+    depends on STDIO_TARGET_STM32CUBE_UART
 
-    config STDIO_TARGET_UART_1
-        bool "Use port 1"
+    config STDIO_TARGET_STM32CUBE_UART_PORT_1
+        bool "Use huart1"
 
-    config STDIO_TARGET_UART_2
-        bool "Use port 2"
+    config STDIO_TARGET_STM32CUBE_UART_PORT_2
+        bool "Use huart2"
 
 endchoice
+
+config STDIO_TARGET_STM32CUBE_UART_PORT
+    string
+    default "huart1" if STDIO_TARGET_STM32CUBE_UART_PORT_1
+    default "huart2" if STDIO_TARGET_STM32CUBE_UART_PORT_2
 
 endmenu

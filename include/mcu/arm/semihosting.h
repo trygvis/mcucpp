@@ -35,7 +35,7 @@ void enable();
 
 bool enabled();
 
-uint32_t send_command(enum SemihostingCmd command, void *message);
+uint32_t send_command(enum SemihostingCmd command, void const *message);
 
 static
 int32_t time()

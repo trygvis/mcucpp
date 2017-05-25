@@ -8,7 +8,7 @@ function(_mcucpp_load_dotconfig TARGET)
 
   file(STRINGS ${DOTCONFIG} dotconfig REGEX [^\"])
   foreach (C IN LISTS dotconfig)
-    if ("${C}" MATCHES "([^=]*)=(y)")
+    if ("${C}" MATCHES "([^=]*)=\"?([^\"]*)\"?")
       set(K ${CMAKE_MATCH_1})
       set(V ${CMAKE_MATCH_2})
 
@@ -42,9 +42,9 @@ function(mcucpp_configure_target)
   set(KCONFIG_CMAKE ${CMAKE_BINARY_DIR}/mcucpp/${T}-kconfig.cmake)
 
   if (NOT KCONFIG_PROGRAM)
-      message("Could not find kconfig-frontend in PATH, won't create targets for launching kconfig.")
-      message("This is not a problem unless you need to change the configuration. See the docs for more info: ${MCUCPP_PREFIX}/doc/kconfig.md")
-  else()
+    message("Could not find kconfig-frontend in PATH, won't create targets for launching kconfig.")
+    message("This is not a problem unless you need to change the configuration. See the docs for more info: ${MCUCPP_PREFIX}/doc/kconfig.md")
+  else ()
     get_filename_component(KCONFIG_DIR "${KCONFIG_PROGRAM}" DIRECTORY)
 
     if (WIN32)
@@ -109,10 +109,10 @@ function(mcucpp_process)
     include/mcu/io/output_stream.h
     src/io/output_stream.cpp
 
-    include/mcu/stm32cubemx/debug.h
+    include/mcu/stm32cube/debug.h
 
-    include/mcu/stm32cubemx/uart.h
-    src/stm32cubemx/uart.cpp
+    include/mcu/stm32cube/uart.h
+    src/stm32cube/uart.cpp
   )
 
   if (CONFIG_TINYPRINTF)
@@ -143,6 +143,26 @@ function(mcucpp_process)
   if (CONFIG_SEMIHOSTING_PUTS)
     _mcucpp_append(src/arm/semihosting-puts.cpp)
   endif ()
+
+  # Stdio settings
+
+  if (CONFIG_STDIO_TARGET_SEMIHOSTING)
+    _mcucpp_append(
+      src/arm/semihosting-stdout.cpp)
+  endif ()
+
+  if (CONFIG_STDIO_TARGET_STM32CUBE_UART)
+    _mcucpp_append(
+      src/generic/putchar.cpp
+      src/generic/puts.cpp
+      src/stm32cube/stdout-impl.cpp)
+
+    set_source_files_properties(
+      ${MCUCPP_PREFIX}/src/stm32cube/stdout-impl.cpp
+      PROPERTIES COMPILE_DEFINITIONS CONFIG_STDIO_TARGET_STM32CUBE_UART_PORT=${CONFIG_STDIO_TARGET_STM32CUBE_UART_PORT})
+  endif ()
+
+  # Debugging
 
   if (ARGS_DEBUG)
     message("Include directories")

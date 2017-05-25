@@ -19,13 +19,13 @@ void enable()
     _enabled = true;
 }
 
-uint32_t send_command(enum SemihostingCmd command, void *message)
+uint32_t send_command(enum SemihostingCmd command, void const *message)
 {
     if (!_enabled) {
         return UINT32_MAX;
     }
 
-    int c = static_cast<int>(command);
+    auto c = static_cast<int>(command);
     uint32_t r;
 
     __asm volatile (
@@ -42,5 +42,3 @@ uint32_t send_command(enum SemihostingCmd command, void *message)
 }
 
 } // namespace semihosting
-
-using namespace semihosting;
