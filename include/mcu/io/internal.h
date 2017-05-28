@@ -13,23 +13,23 @@ namespace internal {
  * @param chr
  * @return Returns true if the character was successfully written.
  */
-bool stdout_putchar(char chr);
+size_t stdout_putchar(char chr);
 
 /**
  * Writes a null-terminated string to stdout
  *
  * @param chr
- * @return Returns true if all the characters was successfully written.
+ * @return Returns the number of characters written.
  */
-bool stdout_puts(const char *str);
+size_t stdout_puts(const char *str);
 
 /**
  * Writes a string of the specified length to stdout
  *
  * @param chr
- * @return Returns true if all the characters was successfully written.
+ * @return Returns the number of bytes written.
  */
-bool stdout_write(const uint8_t *str, size_t size);
+size_t stdout_write(const uint8_t *str, size_t size);
 
 } // namespace internal
 } // namespace io

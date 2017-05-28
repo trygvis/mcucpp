@@ -8,7 +8,20 @@
 namespace mcu {
 namespace io {
 
-size_t formatted_output_stream::println(const char *format, ...) {
+size_t formatted_output_stream::print(const char *format, ...)
+{
+    char buffer[100];
+
+    va_list args;
+    va_start(args, format);
+    int count = tfp_vsnprintf(buffer, SizeOfArray(buffer), format, args);
+    va_end(args);
+
+    return write(reinterpret_cast<uint8_t *>(buffer), count);
+}
+
+size_t formatted_output_stream::println(const char *format, ...)
+{
     char buffer[100];
 
     va_list args;
@@ -22,7 +35,6 @@ size_t formatted_output_stream::println(const char *format, ...) {
         written += write(&c, 1);
     }
     return written;
-//    return 0;
 }
 
 } // namespace io

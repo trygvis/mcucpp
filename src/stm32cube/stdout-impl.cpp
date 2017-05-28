@@ -18,26 +18,28 @@ namespace internal {
 extern "C"
 UART_HandleTypeDef handle;
 
-bool stdout_putchar(char chr)
+size_t stdout_putchar(char chr)
 {
     auto data = static_cast<uint8_t>(chr);
     HAL_UART_Transmit(&handle, &data, 1, 100);
+
+    return 1;
 }
 
-bool stdout_puts(const char *str)
+size_t stdout_puts(const char *str)
 {
     size_t size = strlen(str);
-    bool ok = stdout_write(reinterpret_cast<const uint8_t *>(str), size);
+    auto written = stdout_write(reinterpret_cast<const uint8_t *>(str), size);
 
-    if(!ok) {
-        return false;
+    if (written != size) {
+        return written;
     }
 
-    char eol = '\n';
-    return stdout_write(reinterpret_cast<const uint8_t *>(&eol), 1);
+    uint8_t eol = '\n';
+    return written + stdout_write(&eol, 1);
 }
 
-bool stdout_write(const uint8_t *str, size_t size)
+size_t stdout_write(const uint8_t *str, size_t size)
 {
     for (size_t i = 0; i < size; i += std::numeric_limits<uint16_t>::max()) {
         uint16_t packet = size > std::numeric_limits<uint16_t>::max() ?
@@ -46,6 +48,8 @@ bool stdout_write(const uint8_t *str, size_t size)
 
         HAL_UART_Transmit(&handle, const_cast<uint8_t *>(str), packet, 100);
     }
+
+    return size;
 }
 
 } // namespace internal

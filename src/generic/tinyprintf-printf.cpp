@@ -21,5 +21,5 @@ int printf(const char *format, ...) {
         reinterpret_cast<uint8_t *>(&buf[0]),
         static_cast<size_t>(size));
 
-    return 0;
+    return size;
 }
