@@ -29,7 +29,7 @@ bool stdout_puts(const char *str);
  * @param chr
  * @return Returns true if all the characters was successfully written.
  */
-bool stdout_puts(const uint8_t *str, size_t size);
+bool stdout_write(const uint8_t *str, size_t size);
 
 } // namespace internal
 } // namespace io

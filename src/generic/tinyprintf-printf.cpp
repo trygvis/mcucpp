@@ -17,7 +17,7 @@ int printf(const char *format, ...) {
     int size = tfp_vsnprintf(buf, buffer_size, format, args);
     va_end(args);
 
-    mcu::io::internal::stdout_puts(
+    mcu::io::internal::stdout_write(
         reinterpret_cast<uint8_t *>(&buf[0]),
         static_cast<size_t>(size));
 

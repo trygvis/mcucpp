@@ -27,10 +27,17 @@ bool stdout_putchar(char chr)
 bool stdout_puts(const char *str)
 {
     size_t size = strlen(str);
-    return stdout_puts(reinterpret_cast<const uint8_t *>(str), size);
+    bool ok = stdout_write(reinterpret_cast<const uint8_t *>(str), size);
+
+    if(!ok) {
+        return false;
+    }
+
+    char eol = '\n';
+    return stdout_write(reinterpret_cast<const uint8_t *>(&eol), 1);
 }
 
-bool stdout_puts(const uint8_t *str, size_t size)
+bool stdout_write(const uint8_t *str, size_t size)
 {
     for (size_t i = 0; i < size; i += std::numeric_limits<uint16_t>::max()) {
         uint16_t packet = size > std::numeric_limits<uint16_t>::max() ?
