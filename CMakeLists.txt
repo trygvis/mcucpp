@@ -11,4 +11,7 @@ add_executable(tests
     test/function-test.cpp
 
     include/mcu/nonew/queue.h
-    test/queue-test.cpp)
+    test/queue-test.cpp
+
+    include/mcu/util.h
+    test/util-value_to_int_t-test.cpp)

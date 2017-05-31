@@ -1,7 +1,8 @@
 #include <iostream>
 #include <functional>
-#include <mcu/nonew/function.h>
+#include "mcu/nonew/function.h"
 #include "mcu/nonew/queue.h"
+#include "mcu/util.h"
 
 #include "catch.hpp"
 
@@ -26,7 +27,7 @@ struct test_platform {
 };
 
 template<size_t Size>
-using queue_t = queue<string, Size, test_platform>;
+using queue_t = queue<string, Size, typename mcu::value_to_int_t<Size>::type, test_platform>;
 
 TEST_CASE("queue") {
     queue_t<10> event_queue;
