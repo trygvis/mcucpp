@@ -27,6 +27,7 @@ class formatted_output_stream : public output_stream {
 public:
     size_t print(const char *format, ...);
     size_t println(const char *format, ...);
+    size_t println();
 
 protected:
 };

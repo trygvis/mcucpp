@@ -37,5 +37,10 @@ size_t formatted_output_stream::println(const char *format, ...)
     return written;
 }
 
+size_t formatted_output_stream::println() {
+    uint8_t c = '\n';
+    return write(&c, 1);
+}
+
 } // namespace io
 } // namespace mcu
