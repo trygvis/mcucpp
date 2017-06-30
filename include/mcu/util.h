@@ -4,6 +4,8 @@
 #include <type_traits>
 #include <cstdint>
 
+namespace mcu {
+
 template<typename R = std::size_t, typename T, std::size_t N>
 static inline constexpr
 R SizeOfArray(const T(&array)[N])
@@ -11,6 +13,8 @@ R SizeOfArray(const T(&array)[N])
     static_assert(std::numeric_limits<R>::max() >= N, "N does not fit in R");
     return static_cast<R>(N);
 }
+
+} // namespace mcu
 
 namespace mcu {
 
@@ -106,6 +110,45 @@ template<unsigned long long Value>
 class value_to_uint_t<Value, typename std::enable_if<
     std::numeric_limits<uint32_t>::max() < Value &&
     Value <= std::numeric_limits<uint64_t>::max()>::type> {
+public:
+    using type = uint64_t;
+    using fast_type = uint_fast64_t;
+    using least_type = uint_least64_t;
+};
+
+} // namespace mcu
+
+namespace mcu {
+
+template<unsigned long long Value, class Enable = void>
+class bitmap_t;
+
+template<unsigned long long Value>
+class bitmap_t<Value, typename std::enable_if<Value <= 8>::type> {
+public:
+    using type = uint8_t;
+    using fast_type = uint_fast8_t;
+    using least_type = uint_least8_t;
+};
+
+template<unsigned long long Value>
+class bitmap_t<Value, typename std::enable_if<8 < Value && Value <= 16>::type> {
+public:
+    using type = uint16_t;
+    using fast_type = uint_fast16_t;
+    using least_type = uint_least16_t;
+};
+
+template<unsigned long long Value>
+class bitmap_t<Value, typename std::enable_if<16 < Value && Value <= 32>::type> {
+public:
+    using type = uint32_t;
+    using fast_type = uint_fast32_t;
+    using least_type = uint_least32_t;
+};
+
+template<unsigned long long Value>
+class bitmap_t<Value, typename std::enable_if<32 < Value && Value <= 64>::type> {
 public:
     using type = uint64_t;
     using fast_type = uint_fast64_t;

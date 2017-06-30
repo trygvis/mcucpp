@@ -125,7 +125,6 @@ private:
 
     __attribute__((always_inline))
     const Invoker *invoker() const {
-
         return reinterpret_cast<const Invoker *>(storage_);
     }
 
