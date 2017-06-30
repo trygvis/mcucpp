@@ -5,26 +5,10 @@
 #include "mcu/util.h"
 
 #include "catch.hpp"
+#include "test-utils.h"
 
 using namespace mcu::nonew;
 using namespace std;
-
-bool expect_failure;
-
-struct expected_failure {
-};
-
-struct test_platform {
-    static void check(bool ok) {
-        if (!ok) {
-            if (expect_failure) {
-                throw expected_failure();
-            }
-
-            FAIL(ok, "Unexpected failure");
-        }
-    }
-};
 
 template<size_t Size>
 using queue_t = queue<string, Size, typename mcu::value_to_int_t<Size>::type, test_platform>;
