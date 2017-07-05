@@ -1,6 +1,7 @@
 #pragma once
 
 #include <utility>
+#include <cstring>
 
 namespace mcu {
 
@@ -72,7 +73,7 @@ public:
         return size_;
     }
 
-    inline T const *underlying() const
+    inline T const *data() const
     {
         return buf_;
     }
@@ -87,5 +88,19 @@ public:
 };
 
 using string_view = array_view<char>;
+
+template<typename T, std::size_t N, typename ReturnT = typename std::remove_const<typename std::decay<T>::type>::type>
+constexpr
+array_view<ReturnT> make_array_view(T (&array)[N])
+{
+    return array_view<ReturnT>(array, N);
+}
+
+static
+string_view make_string_view(const char *str)
+{
+    auto len = std::strlen(str);
+    return string_view(str, len);
+}
 
 } // namespace mcu

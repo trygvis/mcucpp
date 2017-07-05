@@ -6,7 +6,7 @@ int to_int(const array_view<char> &str)
 {
     int value = 0;
 
-    auto buf = str.underlying();
+    auto buf = str.data();
     auto size = str.size();
 
     for (int i = 0; i < size; i++) {
@@ -24,7 +24,7 @@ int to_int(const array_view<char> &str)
 
 bool equals(const string_view &a_view, const char *b_ptr)
 {
-    const char *a_ptr = a_view.underlying();
+    const char *a_ptr = a_view.data();
 
     auto size = a_view.size();
     int i = 0;

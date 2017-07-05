@@ -8,11 +8,6 @@
 
 using namespace mcu;
 
-string_view make_string_view(const char *s)
-{
-    return {s, int(strlen(s))};
-}
-
 TEST_CASE("to_int")
 {
     const char data[] = "1234567890\0";

@@ -21,11 +21,11 @@ TEST_CASE("array_view")
     string_view v1;
 
     REQUIRE(v1.size() == 0);
-    REQUIRE(v1.underlying() == nullptr);
+    REQUIRE(v1.data() == nullptr);
 
     string_view v2{data, 10};
     REQUIRE(v2.size() == 10);
-    REQUIRE(v2.underlying() == data);
+    REQUIRE(v2.data() == data);
 }
 
 TEST_CASE("array_view::slice")
@@ -33,17 +33,17 @@ TEST_CASE("array_view::slice")
     const char data[] = "1234567890";
 
     string_view v1{data, 10};
-    REQUIRE(v1.slice(0).underlying() == data);
+    REQUIRE(v1.slice(0).data() == data);
     REQUIRE(v1.slice(0).size() == 10);
     REQUIRE(v1.slice(20).size() == 0);
 
     auto v2 = v1.slice(4);
     REQUIRE(v2.size() == 6);
-    REQUIRE(v2.underlying() == &data[4]);
+    REQUIRE(v2.data() == &data[4]);
 
-    REQUIRE(memcmp("567890", v2.underlying(), 6) == 0);
+    REQUIRE(memcmp("567890", v2.data(), 6) == 0);
     REQUIRE(v1.slice(2, 6).size() == 4);
-    REQUIRE(memcmp("3456", v1.slice(2, 6).underlying(), 4) == 0);
+    REQUIRE(memcmp("3456", v1.slice(2, 6).data(), 4) == 0);
 }
 
 TEST_CASE("array_view::index_of")
