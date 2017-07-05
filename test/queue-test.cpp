@@ -32,7 +32,7 @@ TEST_CASE("queue") {
     } catch (expected_failure &) {
     }
 
-    for (int i = 0; i < event_queue.capacity; i++) {
+    for (int i = 0; i < event_queue.capacity(); i++) {
         event_queue.push_back(to_string(i));
     }
 

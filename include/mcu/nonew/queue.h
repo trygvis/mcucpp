@@ -4,6 +4,8 @@
 #include <numeric>
 #include <limits>
 
+#include <mcu/util.h>
+
 extern "C"
 __attribute__((noreturn))
 int halt();
@@ -20,15 +22,14 @@ struct mcu_default_platform {
     }
 };
 
-template<typename T, size_t Capacity, typename idx_t = int8_t, typename platform = mcu_default_platform>
+template<typename T, size_t Capacity, typename idx_t = typename mcu::value_to_int_t<Capacity>::type, typename platform = mcu_default_platform>
 class queue {
     static_assert(std::numeric_limits<idx_t>::max() >= Capacity, "The index type is too small for the given capacity");
     static_assert(std::numeric_limits<idx_t>::is_signed, "The index type must be signed");
 
+    static const idx_t capacity_ = static_cast<idx_t>(Capacity);
 public:
     typedef T element_type;
-
-    static const idx_t capacity = static_cast<idx_t>(Capacity);
 
 private:
     using ValueType = T;
@@ -72,6 +73,10 @@ public:
 
     bool is_full() const {
         return size_ >= Capacity;
+    }
+
+    idx_t capacity() {
+        return capacity_;
     }
 
     idx_t size() const {
