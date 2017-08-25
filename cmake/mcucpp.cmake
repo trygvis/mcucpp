@@ -71,7 +71,9 @@ endfunction()
 
 macro(_mcucpp_append)
   foreach (item ${ARGN})
-    set(item ${MCUCPP_PREFIX}/${item})
+    if (NOT IS_ABSOLUTE ${item})
+      set(item ${MCUCPP_PREFIX}/${item})
+    endif ()
 
     if (item MATCHES "\\.h$")
       list(APPEND HEADERS ${item})
@@ -86,7 +88,7 @@ endmacro()
 function(mcucpp_process)
 
   set(options)
-  set(oneValueArgs TARGET DEBUG)
+  set(oneValueArgs TARGET DEBUG TINYPRINTF_DIR)
   set(multiValueArgs)
   cmake_parse_arguments(ARGS "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -116,10 +118,24 @@ function(mcucpp_process)
   )
 
   if (CONFIG_TINYPRINTF)
+    if (ARGS_TINYPRINTF_DIR)
+      if (IS_ABSOLUTE ${ARGS_TINYPRINTF_DIR})
+        set(tinyprintf_dir "${ARGS_TINYPRINTF_DIR}")
+      else()
+        set(tinyprintf_dir "${CMAKE_CURRENT_LIST_DIR}/${ARGS_TINYPRINTF_DIR}")
+      endif ()
+    else ()
+      set(tinyprintf_dir "thirdparty/tinyprintf")
+    endif ()
+
+    if (NOT EXISTS ${tinyprintf_dir}/tinyprintf.c)
+      message(FATAL_ERROR "mcucpp: ${tinyprintf_dir} is missing, did you forget to clone the git submodules?")
+    endif ()
+
     _mcucpp_append(
-      thirdparty/tinyprintf
-      thirdparty/tinyprintf/tinyprintf.h
-      thirdparty/tinyprintf/tinyprintf.c)
+      ${tinyprintf_dir}
+      ${tinyprintf_dir}/tinyprintf.h
+      ${tinyprintf_dir}/tinyprintf.c)
   endif ()
 
   if (CONFIG_TINYPRINTF_PRINTF)
