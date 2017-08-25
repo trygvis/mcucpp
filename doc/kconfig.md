@@ -1,7 +1,7 @@
 The MCU C++ library can be customized with the same tool that the Linux kernel use; kconfig.
 
 The CMake function `mcucpp_configure_target(TARGET foo)` want to create a target called `foo-kconfig` that launches the
-configuration tool for you. However, if the `kconfig` program can't be found in your system's PATH you will get a 
+configuration tool for you. However, if the `kconfig` program can't be found in your system's PATH you will get a
 warning when configuring your build.
 
 There are no good binary builds of `kconfig` but for Linux and Cygwin on Windows there are a Git repository that can be
@@ -10,7 +10,7 @@ used: `http://ymorin.is-a-geek.org/git/kconfig-frontends`. Building it is fairly
     git clone http://ymorin.is-a-geek.org/git/kconfig-frontends
     cd kconfig-frontends
     autoreconf -fi
-    ./configure --prefix=$(pwd)/kconfig-frontends
+    ./configure --prefix=$(pwd)/kconfig-frontends --enable-mconf
     make install -j
 
 Note that if you first run CMake, get the error message, fix the problem and then run CMake again you will still get the
