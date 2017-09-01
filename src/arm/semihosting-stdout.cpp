@@ -1,36 +1,71 @@
 #include <mcu/io/internal.h>
 #include <mcu/arm/semihosting.h>
+#include <mcu/config.h>
+#include <cstring>
+
+#if CONFIG_SEMIHOSTING
+
+#include <stm32f1xx.h>
+
+#endif
 
 namespace mcu {
 namespace io {
 namespace internal {
 
-using namespace semihosting;
+using semihosting::send_command;
+using semihosting::SemihostingCmd;
 
-bool stdout_putchar(char chr) {
-    send_command(SemihostingCmd::SYS_WRITEC, &chr);
+void stdout_init()
+{
+    bool debugger_connected;
 
-    return true;
+#if CONFIG_SEMIHOSTING
+    debugger_connected = (CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) != 0;
+#else
+    debugger_connected = false;
+#endif
+
+    if (debugger_connected) {
+        semihosting::enable();
+    } else {
+        semihosting::disable();
+    }
 }
 
-bool stdout_puts(const char *str) {
+size_t stdout_putchar(char chr)
+{
+    send_command(SemihostingCmd::SYS_WRITEC, &chr);
+
+    return 1;
+}
+
+size_t stdout_puts(const char *str)
+{
+    size_t len = strlen(str);
     send_command(SemihostingCmd::SYS_WRITE0, (void *) str);
     char eol = '\n';
     send_command(SemihostingCmd::SYS_WRITEC, &eol);
-    return true;
+    return len;
 }
 
-bool stdout_puts(const uint8_t *str, size_t size) {
-
-    // There is no "write binary to debug channel" (only write char and write null-terminated strings) so this is a
-    // a naive implementation that just writes a single byte at the time.
-
-    // This is going to be very slow. It can be optimized
+size_t stdout_write(const uint8_t *const str, size_t size)
+{
+    // Write out all null-terminated strings we can find with SYS_WRITE0 and then switch to writing all the remaining
+    // characters one by one.
+    size_t done = 0;
     for (size_t i = 0; i < size; i++) {
-        send_command(SemihostingCmd::SYS_WRITEC, static_cast<void const *>(&str[i]));
+        if (str[i] == '\0') {
+            send_command(SemihostingCmd::SYS_WRITE0, &str[done]);
+            done = i;
+        }
     }
 
-    return true;
+    for (size_t i = done; i < size; i++) {
+        send_command(SemihostingCmd::SYS_WRITEC, &str[i]);
+    }
+
+    return size;
 }
 
 } // namespace internal

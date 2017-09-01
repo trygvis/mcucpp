@@ -6,5 +6,5 @@ extern "C"
 __attribute__((used))
 int putchar(char chr)
 {
-    stdout_putchar(chr);
+    return stdout_putchar(chr);
 }

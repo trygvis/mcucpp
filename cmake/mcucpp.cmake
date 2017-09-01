@@ -3,8 +3,15 @@ get_filename_component(MCUCPP_PREFIX ${MCUCPP_PREFIX} ABSOLUTE)
 
 find_program(KCONFIG_PROGRAM NAMES kconfig)
 
-function(_mcucpp_load_dotconfig TARGET)
+function(_mcucpp_load_dotconfig TARGET CONFIG_H)
   get_target_property(DOTCONFIG "${TARGET}" DOTCONFIG)
+
+  if (CONFIG_H)
+    file(WRITE ${CONFIG_H}
+      "/* GENERATED FILE. */\n"
+      "/* Do not edit or you will be annoyed */\n"
+      "#pragma once\n")
+  endif ()
 
   file(STRINGS ${DOTCONFIG} dotconfig REGEX [^\"])
   foreach (C IN LISTS dotconfig)
@@ -14,6 +21,14 @@ function(_mcucpp_load_dotconfig TARGET)
 
       # message("dotconfig: ${K} -> ${V}")
       set("${K}" "${V}" PARENT_SCOPE)
+
+      if (CONFIG_H)
+        if ("${V}" STREQUAL y)
+          set(V 1)
+        endif ()
+
+        file(APPEND ${CONFIG_H} "#define ${K} ${V}\n")
+      endif ()
     endif ()
   endforeach ()
 endfunction()
@@ -39,7 +54,7 @@ function(mcucpp_configure_target)
 
   set_target_properties(${T} PROPERTIES DOTCONFIG ${DOTCONFIG})
 
-  set(KCONFIG_CMAKE ${CMAKE_BINARY_DIR}/mcucpp/${T}-kconfig.cmake)
+  set(KCONFIG_CMAKE ${CMAKE_BINARY_DIR}/mcu/${T}-kconfig.cmake)
 
   if (NOT KCONFIG_PROGRAM)
     message("Could not find kconfig-frontend in PATH, won't create targets for launching kconfig.")
@@ -58,7 +73,7 @@ function(mcucpp_configure_target)
       BYPRODUCTS "${DOTCONFIG}"
       COMMAND ${CMAKE_COMMAND} -E env "PATH=${PATH}" kconfig mconf ${MCUCPP_PREFIX}/Kconfig
       COMMAND ${CMAKE_COMMAND} -E touch "${KCONFIG_CMAKE}"
-      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+      WORKING_DIRECTORY ${DOTCONFIG_DIR}
       USES_TERMINAL)
   endif ()
 
@@ -100,7 +115,9 @@ function(mcucpp_process)
     message(FATAL_ERROR "Missing required argument TARGET")
   endif ()
 
-  _mcucpp_load_dotconfig(${ARGS_TARGET})
+  set(CONFIG_H_DIR "${CMAKE_CURRENT_BINARY_DIR}/${ARGS_TARGET}-config")
+  set(CONFIG_H "${CONFIG_H_DIR}/mcu/config.h")
+  _mcucpp_load_dotconfig(${ARGS_TARGET} ${CONFIG_H})
 
   _mcucpp_append(
     include
@@ -121,7 +138,7 @@ function(mcucpp_process)
     if (ARGS_TINYPRINTF_DIR)
       if (IS_ABSOLUTE ${ARGS_TINYPRINTF_DIR})
         set(tinyprintf_dir "${ARGS_TINYPRINTF_DIR}")
-      else()
+      else ()
         set(tinyprintf_dir "${CMAKE_CURRENT_LIST_DIR}/${ARGS_TINYPRINTF_DIR}")
       endif ()
     else ()
@@ -172,10 +189,6 @@ function(mcucpp_process)
       src/generic/putchar.cpp
       src/generic/puts.cpp
       src/stm32cube/stdout-impl.cpp)
-
-    set_source_files_properties(
-      ${MCUCPP_PREFIX}/src/stm32cube/stdout-impl.cpp
-      PROPERTIES COMPILE_DEFINITIONS CONFIG_STDIO_TARGET_STM32CUBE_UART_PORT=${CONFIG_STDIO_TARGET_STM32CUBE_UART_PORT})
   endif ()
 
   # Debugging
@@ -197,9 +210,7 @@ function(mcucpp_process)
     endforeach ()
   endif ()
 
-  if (ARGS_TARGET)
-    target_include_directories(${ARGS_TARGET} PUBLIC ${INCLUDE_DIRECTORIES})
-    target_sources(${ARGS_TARGET} PUBLIC ${SOURCES})
-  endif ()
+  target_include_directories(${ARGS_TARGET} PUBLIC ${INCLUDE_DIRECTORIES} ${CONFIG_H_DIR})
+  target_sources(${ARGS_TARGET} PUBLIC ${SOURCES} ${CONFIG_H})
 
 endfunction()

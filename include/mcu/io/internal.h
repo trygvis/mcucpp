@@ -7,11 +7,13 @@ namespace mcu {
 namespace io {
 namespace internal {
 
+void stdout_init();
+
 /**
  * Write character to stdout
  *
  * @param chr
- * @return Returns true if the character was successfully written.
+ * @return Returns 1 if the character was successfully written.
  */
 size_t stdout_putchar(char chr);
 

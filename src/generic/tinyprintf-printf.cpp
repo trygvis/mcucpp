@@ -4,7 +4,6 @@
 
 #define TINYPRINTF_DEFINE_TFP_PRINTF 0
 #define TINYPRINTF_OVERRIDE_LIBC 0
-
 #include "tinyprintf.h"
 
 extern "C"
@@ -19,7 +18,7 @@ int printf(const char *format, ...) {
 
     mcu::io::internal::stdout_write(
         reinterpret_cast<uint8_t *>(&buf[0]),
-        static_cast<size_t>(size));
+        static_cast<size_t>(size + 1));
 
     return size;
 }

@@ -1,3 +1,4 @@
+#include <mcu/config.h>
 #include <mcu/io/internal.h>
 
 #include <stm32f1xx_hal_dma.h>
@@ -17,6 +18,10 @@ namespace internal {
 
 extern "C"
 UART_HandleTypeDef handle;
+
+void stdout_init()
+{
+}
 
 size_t stdout_putchar(char chr)
 {
