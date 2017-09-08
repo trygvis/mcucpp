@@ -3,10 +3,8 @@
 #include <mcu/config.h>
 #include <cstring>
 
-#if CONFIG_SEMIHOSTING
-
+#if CONFIG_SEMIHOSTING && CONFIG_CHIP_FAMILY_STM32
 #include <stm32f1xx.h>
-
 #endif
 
 namespace mcu {
@@ -20,7 +18,7 @@ void stdout_init()
 {
     bool debugger_connected;
 
-#if CONFIG_SEMIHOSTING
+#if CONFIG_SEMIHOSTING && CONFIG_CHIP_FAMILY_STM32
     debugger_connected = (CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) != 0;
 #else
     debugger_connected = false;

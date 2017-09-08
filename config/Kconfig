@@ -1,5 +1,7 @@
 mainmenu "MCU C++ Configuration"
 
+source chip.config
+
 menu "tinyprintf settings"
   config TINYPRINTF
     bool "Enable tinyprintf"
@@ -47,6 +49,7 @@ choice STDIO_TARGET
 
     config STDIO_TARGET_STM32CUBE_UART
         bool "STM32Cube UART"
+        depends on CHIP_FAMILY_STM32
 
 endchoice
 
@@ -64,6 +67,7 @@ endchoice
 
 config STDIO_TARGET_STM32CUBE_UART_PORT
     string
+    depends on CHIP_FAMILY_STM32
     default "huart1" if STDIO_TARGET_STM32CUBE_UART_PORT_1
     default "huart2" if STDIO_TARGET_STM32CUBE_UART_PORT_2
 endmenu

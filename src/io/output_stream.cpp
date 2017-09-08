@@ -30,7 +30,7 @@ size_t formatted_output_stream::println(const char *format, ...)
     va_end(args);
 
     auto written = write(reinterpret_cast<uint8_t *>(buffer), count);
-    if (written == count) {
+    if (written == static_cast<size_t>(count)) {
         uint8_t c = '\n';
         written += write(&c, 1);
     }

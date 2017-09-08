@@ -33,7 +33,7 @@ function(_mcucpp_load_dotconfig TARGET CONFIG_H)
   endforeach ()
 endfunction()
 
-function(mcucpp_configure_target)
+function(mcucpp_create_kconfig_target)
   set(options)
   set(oneValueArgs TARGET DOTCONFIG)
   set(multiValueArgs)
@@ -45,7 +45,7 @@ function(mcucpp_configure_target)
   set(T ${ARGS_TARGET})
 
   if (NOT ARGS_DOTCONFIG)
-    set(DOTCONFIG "${PROJECT_SOURCE_DIR}/.config")
+    set(DOTCONFIG "${CMAKE_CURRENT_LIST_DIR}/.config")
   else ()
     set(DOTCONFIG "${ARGS_DOTCONFIG}")
   endif ()
@@ -71,9 +71,9 @@ function(mcucpp_configure_target)
     add_custom_target(${T}-kconfig
       DEPENDS "${DOTCONFIG}"
       BYPRODUCTS "${DOTCONFIG}"
-      COMMAND ${CMAKE_COMMAND} -E env "PATH=${PATH}" kconfig mconf ${MCUCPP_PREFIX}/Kconfig
+      COMMAND ${CMAKE_COMMAND} -E env "PATH=${PATH}" "KCONFIG_CONFIG=${DOTCONFIG}" kconfig mconf Kconfig
       COMMAND ${CMAKE_COMMAND} -E touch "${KCONFIG_CMAKE}"
-      WORKING_DIRECTORY ${DOTCONFIG_DIR}
+      WORKING_DIRECTORY ${MCUCPP_PREFIX}/config
       USES_TERMINAL)
   endif ()
 
@@ -100,10 +100,10 @@ macro(_mcucpp_append)
   endforeach ()
 endmacro()
 
-function(mcucpp_process)
+function(mcucpp_process_dotconfig)
 
-  set(options)
-  set(oneValueArgs TARGET DEBUG TINYPRINTF_DIR)
+  set(options DEBUG)
+  set(oneValueArgs TARGET TINYPRINTF_DIR)
   set(multiValueArgs)
   cmake_parse_arguments(ARGS "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -127,12 +127,16 @@ function(mcucpp_process)
 
     include/mcu/io/output_stream.h
     src/io/output_stream.cpp
-
-    include/mcu/stm32cube/debug.h
-
-    include/mcu/stm32cube/uart.h
-    src/stm32cube/uart.cpp
   )
+
+  if (CONFIG_)
+    _mcucpp_append(
+      include/mcu/stm32cube/debug.h
+
+      include/mcu/stm32cube/uart.h
+      src/stm32cube/uart.cpp
+    )
+  endif ()
 
   if (CONFIG_TINYPRINTF)
     if (ARGS_TINYPRINTF_DIR)

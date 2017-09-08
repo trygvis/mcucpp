@@ -38,6 +38,7 @@ bool enabled();
 uint32_t send_command(enum SemihostingCmd command, void const *message);
 
 static
+__attribute__((unused))
 int32_t time()
 {
     auto r = send_command(SemihostingCmd::SYS_TIME, nullptr);

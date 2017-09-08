@@ -3,7 +3,6 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
-#include "mcu/init.h"
 
 namespace mcu {
 namespace io {
@@ -31,18 +30,6 @@ public:
     size_t println();
 
 protected:
-};
-
-template<size_t BufferSize>
-class buffered_output_stream : public output_stream {
-    uint8_t buffer[BufferSize];
-
-public:
-    virtual size_t write(const uint8_t *data, size_t size) {
-//        if(buffer)
-        halt();
-        return 0;
-    }
 };
 
 
