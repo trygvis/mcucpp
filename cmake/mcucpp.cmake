@@ -113,6 +113,7 @@ function(mcucpp_process_dotconfig)
 
   if (NOT ARGS_TARGET)
     message(FATAL_ERROR "Missing required argument TARGET")
+    return()
   endif ()
 
   set(CONFIG_H_DIR "${CMAKE_CURRENT_BINARY_DIR}/${ARGS_TARGET}-config")
@@ -124,6 +125,7 @@ function(mcucpp_process_dotconfig)
 
     include/mcu/nonew/function.h
     include/mcu/nonew/queue.h
+    include/mcu/util.h
 
     include/mcu/io/output_stream.h
     src/io/output_stream.cpp
@@ -215,6 +217,6 @@ function(mcucpp_process_dotconfig)
   endif ()
 
   target_include_directories(${ARGS_TARGET} PUBLIC ${INCLUDE_DIRECTORIES} ${CONFIG_H_DIR})
-  target_sources(${ARGS_TARGET} PUBLIC ${SOURCES} ${CONFIG_H})
+  target_sources(${ARGS_TARGET} PUBLIC ${SOURCES} ${HEADERS} ${CONFIG_H})
 
 endfunction()
