@@ -142,7 +142,6 @@ private:
 //        static_assert(sizeof(holder_t) <= alloc_size, "Function to be assigned is too big");
         static_assert_le<sizeof(holder_t), alloc_size>();
 
-        Func f = func;
         auto tmp = new(&storage_)holder_t(std::forward<RealFunc>(func));
         static_cast<void>(tmp);
 
@@ -158,7 +157,7 @@ private:
     }
 
     struct Invoker {
-        virtual ~Invoker() {}
+        virtual ~Invoker() = default;
 
         virtual Ret invoke(Args... args) = 0;
 
@@ -167,7 +166,7 @@ private:
 
     template<typename Value>
     struct FuncHolder : public Invoker {
-        virtual ~FuncHolder() {}
+        virtual ~FuncHolder() = default;
 
         FuncHolder(Value &&value) : value(std::forward<Value>(value)) {}
 

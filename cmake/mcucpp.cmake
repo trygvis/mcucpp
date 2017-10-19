@@ -3,15 +3,13 @@ get_filename_component(MCUCPP_PREFIX ${MCUCPP_PREFIX} ABSOLUTE)
 
 find_program(KCONFIG_PROGRAM NAMES kconfig)
 
-function(_mcucpp_load_dotconfig TARGET CONFIG_H)
+function(_mcucpp_generate_config_h TARGET CONFIG_H)
   get_target_property(DOTCONFIG "${TARGET}" DOTCONFIG)
 
-  if (CONFIG_H)
-    file(WRITE ${CONFIG_H}
-      "/* GENERATED FILE. */\n"
-      "/* Do not edit or you will be annoyed */\n"
-      "#pragma once\n")
-  endif ()
+  file(WRITE ${CONFIG_H}
+    "/* GENERATED FILE. */\n"
+    "/* Do not edit or you will be annoyed */\n"
+    "#pragma once\n")
 
   file(STRINGS ${DOTCONFIG} dotconfig REGEX [^\"])
   foreach (C IN LISTS dotconfig)
@@ -19,16 +17,38 @@ function(_mcucpp_load_dotconfig TARGET CONFIG_H)
       set(K ${CMAKE_MATCH_1})
       set(V ${CMAKE_MATCH_2})
 
-      # message("dotconfig: ${K} -> ${V}")
       set("${K}" "${V}" PARENT_SCOPE)
 
-      if (CONFIG_H)
-        if ("${V}" STREQUAL y)
-          set(V 1)
-        endif ()
-
-        file(APPEND ${CONFIG_H} "#define ${K} ${V}\n")
+      if ("${V}" STREQUAL y)
+        set(V 1)
       endif ()
+
+      file(APPEND ${CONFIG_H} "#define ${K} ${V}\n")
+    endif ()
+  endforeach ()
+endfunction()
+
+function(mcucpp_load_dotconfig)
+  set(options)
+  set(oneValueArgs TARGET DOTCONFIG)
+  set(multiValueArgs)
+  cmake_parse_arguments(ARGS "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  if (NOT ARGS_TARGET)
+    message(FATAL_ERROR "Missing required argument TARGET")
+    return()
+  endif ()
+
+  get_target_property(DOTCONFIG "${ARGS_TARGET}" DOTCONFIG)
+
+  file(STRINGS ${DOTCONFIG} dotconfig REGEX [^\"])
+  foreach (C IN LISTS dotconfig)
+    if ("${C}" MATCHES "([^=]*)=\"?([^\"]*)\"?")
+      set(K ${CMAKE_MATCH_1})
+      set(V ${CMAKE_MATCH_2})
+
+      #      message("dotconfig: ${K} -> ${V}")
+      set("${K}" "${V}" PARENT_SCOPE)
     endif ()
   endforeach ()
 endfunction()
@@ -118,7 +138,7 @@ function(mcucpp_process_dotconfig)
 
   set(CONFIG_H_DIR "${CMAKE_CURRENT_BINARY_DIR}/${ARGS_TARGET}-config")
   set(CONFIG_H "${CONFIG_H_DIR}/mcu/config.h")
-  _mcucpp_load_dotconfig(${ARGS_TARGET} ${CONFIG_H})
+  _mcucpp_generate_config_h(${ARGS_TARGET} ${CONFIG_H})
 
   _mcucpp_append(
     include
@@ -169,6 +189,13 @@ function(mcucpp_process_dotconfig)
     _mcucpp_append(src/generic/tinyprintf-snprintf.cpp)
   endif ()
 
+  if (CONFIG_CHIP_ARCH_ARM)
+    _mcucpp_append(
+      include/mcu/arm/core_x.h
+      include/mcu/arm/mutex.h
+    )
+  endif ()
+
   if (CONFIG_SEMIHOSTING)
     _mcucpp_append(
       include/mcu/arm/semihosting.h
@@ -216,7 +243,16 @@ function(mcucpp_process_dotconfig)
     endforeach ()
   endif ()
 
-  target_include_directories(${ARGS_TARGET} PUBLIC ${INCLUDE_DIRECTORIES} ${CONFIG_H_DIR})
-  target_sources(${ARGS_TARGET} PUBLIC ${SOURCES} ${HEADERS} ${CONFIG_H})
+  target_include_directories(${ARGS_TARGET} PUBLIC
+    ${INCLUDE_DIRECTORIES}
+    ${CONFIG_H_DIR})
+
+  target_sources(${ARGS_TARGET} PUBLIC
+    ${SOURCES}
+    ${HEADERS}
+    # These are included so IDEs mark them as source directories for searching.
+    ${INCLUDE_DIRECTORIES}
+    ${CONFIG_H}
+    ${CONFIG_H_DIR})
 
 endfunction()
