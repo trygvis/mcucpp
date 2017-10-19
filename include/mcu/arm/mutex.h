@@ -48,6 +48,10 @@ public:
 //    static_assert(false, "mcu::arm::mutex is only supported on Cortex cores >= 3.");
 //};
 
+#ifndef __always_inline
+#define __always_inline
+#endif
+
 /**
  * Not really tested
  */
