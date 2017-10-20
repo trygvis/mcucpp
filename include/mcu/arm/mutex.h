@@ -67,15 +67,15 @@ public:
     {
         __disable_irq();
 
-        auto l = locked_;
+        bool got_lock = locked_ == 0;
 
-        if (l == 0) {
-            l = locked_ = 1;
+        if (got_lock) {
+            locked_ = 1;
         }
 
         __enable_irq();
 
-        return l;
+        return got_lock;
     }
 
     __always_inline
@@ -84,7 +84,7 @@ public:
         do {
             __disable_irq();
             if (!locked_) {
-                locked_ = true;
+                locked_ = 1;
                 return;
             }
             __enable_irq();
@@ -95,6 +95,15 @@ public:
     void unlock()
     {
         locked_ = 0;
+    }
+
+    __always_inline
+    bool is_locked()
+    {
+        __disable_irq();
+        auto l = locked_ == 1;
+        __enable_irq();
+        return l;
     }
 };
 
