@@ -1,9 +1,16 @@
-#include "mcu/io/output_stream.h"
+#include <mcu/io/output_stream.h>
+#include <mcu/util.h>
 
 #include <cstdio>
-#include <mcu/util.h>
 #include <cstdarg>
+
+#include <mcu/config.h>
+
+#if CONFIG_TINYPRINTF
 #include <tinyprintf.h>
+#else
+#error "Missing tinyprintf implementation"
+#endif
 
 namespace mcu {
 namespace io {

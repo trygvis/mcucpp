@@ -11,5 +11,10 @@
 #endif
 
 #if CONFIG_CHIP_ARCH_ARM_M4 || CONFIG_CHIP_ARCH_ARM_M4F
+
+#if CONFIG_CHIP_FAMILY_NRF52
+#include "nrf52.h"
+#endif
+
 #include "core_cm4.h"
 #endif
