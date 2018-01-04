@@ -11,6 +11,11 @@ function(_mcucpp_generate_config_h TARGET CONFIG_H)
     "/* Do not edit or you will be annoyed */\n"
     "#pragma once\n")
 
+  if (NOT EXISTS ${DOTCONFIG})
+    message(WARNING "The ${DOTCONFIG} does not exist")
+    return()
+  endif ()
+
   file(STRINGS ${DOTCONFIG} dotconfig REGEX [^\"])
   foreach (C IN LISTS dotconfig)
     if ("${C}" MATCHES "([^=]*)=\"?([^\"]*)\"?")
@@ -40,6 +45,11 @@ function(mcucpp_load_dotconfig)
   endif ()
 
   get_target_property(DOTCONFIG "${ARGS_TARGET}" DOTCONFIG)
+
+  if (NOT EXISTS ${DOTCONFIG})
+    message(WARNING "The ${DOTCONFIG} does not exist")
+    return()
+  endif ()
 
   file(STRINGS ${DOTCONFIG} dotconfig REGEX [^\"])
   foreach (C IN LISTS dotconfig)
