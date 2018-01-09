@@ -22,14 +22,18 @@ struct mcu_default_platform {
     }
 };
 
-template<typename T, size_t Capacity, typename idx_t = typename mcu::value_to_int_t<Capacity>::type, typename platform = mcu_default_platform>
+template<typename T, size_t Capacity_, typename idx_t = typename mcu::value_to_int_t<Capacity_>::type, typename platform = mcu_default_platform>
 class queue {
+public:
+    using element_type = T;
+    using IdxT = idx_t;
+    static const size_t Capacity = Capacity_;
+
+private:
     static_assert(std::numeric_limits<idx_t>::max() >= Capacity, "The index type is too small for the given capacity");
     static_assert(std::numeric_limits<idx_t>::is_signed, "The index type must be signed");
 
     static const idx_t capacity_ = static_cast<idx_t>(Capacity);
-public:
-    typedef T element_type;
 
 private:
     using ValueType = T;
@@ -39,7 +43,7 @@ private:
 
     __always_inline
     idx_t wrap(int idx) const {
-        int value =idx >= Capacity ? idx_t(idx - Capacity) : idx;
+        int value = idx >= capacity_ ? idx_t(idx - capacity_) : idx;
         return static_cast<idx_t>(value);
     }
 
@@ -81,6 +85,10 @@ public:
 
     idx_t size() const {
         return size_;
+    }
+
+    void clear() {
+        head = size_ = 0;
     }
 
     template<typename U>
