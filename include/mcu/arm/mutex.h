@@ -44,6 +44,12 @@ public:
     {
         locked_ = 0;
     }
+
+    __always_inline
+    bool is_locked()
+    {
+        return locked_ == 1;
+    }
 };
 
 #else
