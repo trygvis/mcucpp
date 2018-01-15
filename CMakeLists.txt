@@ -23,3 +23,19 @@ add_executable(tests
   include/mcu/array_view.h
   test/string_view-test.cpp
   )
+
+if (${CMAKE_COMPILER_IS_GNUCXX})
+  target_compile_options(tests PUBLIC -Wall -Wextra -Werror --pedantic)
+endif ()
+
+find_package(Doxygen
+  REQUIRED dot
+  OPTIONAL_COMPONENTS mscgen dia)
+
+if (DOXYGEN_FOUND)
+  doxygen_add_docs(
+    doxygen
+    src include
+    COMMENT "Generate man pages"
+  )
+endif ()
