@@ -3,6 +3,7 @@
 #include <cstring>
 #include "mcu/array_view.h"
 #include "mcu/experimental.h"
+#include "mcu/experimental/bits.h"
 
 #include "test-utils.h"
 
@@ -32,4 +33,9 @@ TEST_CASE("equals")
 
     REQUIRE(!equals(make_string_view("abc123xyz").slice(3, 6), "123 "));
     REQUIRE(equals(make_string_view("abc123xyz").slice(3, 6), "123"));
+}
+
+TEST_CASE("bits")
+{
+    REQUIRE(bits::is_set(0x10, 4));
 }

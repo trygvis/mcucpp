@@ -38,7 +38,7 @@ private:
 private:
     using ValueType = T;
 
-    T array[Capacity];
+    T array[capacity_];
     idx_t head, size_;
 
     __always_inline
@@ -48,7 +48,7 @@ private:
     }
 
     idx_t logical_to_physical(idx_t i) const {
-        platform::check(i < Capacity);
+        platform::check(i < capacity_);
 
         idx_t idx = head + i;
 
@@ -56,7 +56,7 @@ private:
     }
 
     idx_t after_tail_idx() const {
-        platform::check(size_ < Capacity);
+        platform::check(size_ < capacity_);
 
         idx_t tail = head + size_;
 
@@ -76,7 +76,7 @@ public:
     }
 
     bool is_full() const {
-        return size_ >= Capacity;
+        return size_ >= capacity_;
     }
 
     idx_t capacity() {

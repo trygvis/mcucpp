@@ -1,5 +1,7 @@
 #pragma once
 
+#include <mcu/internal.h>
+
 #include <utility>
 #include <cstring>
 
@@ -15,7 +17,7 @@ class array_view {
     int size_;
 
 public:
-    array_view(array_view &&other) : buf_(other.buf_), start_(other.start_), size_(other.size_) {}
+    array_view(array_view &&other) noexcept : buf_(other.buf_), start_(other.start_), size_(other.size_) {}
 
     array_view() : buf_(nullptr), start_(0), size_(0) {}
 
@@ -90,17 +92,19 @@ public:
 using string_view = array_view<char>;
 
 template<typename T, std::size_t N, typename ReturnT = typename std::remove_const<typename std::decay<T>::type>::type>
+__unused
 constexpr
 array_view<ReturnT> make_array_view(T (&array)[N])
 {
     return array_view<ReturnT>(array, N);
 }
 
+__unused
 static
 string_view make_string_view(const char *str)
 {
-    auto len = std::strlen(str);
-    return string_view(str, len);
+    auto len = static_cast<int>(std::strlen(str));
+    return {str, len};
 }
 
 } // namespace mcu

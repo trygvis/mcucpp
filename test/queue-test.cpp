@@ -1,3 +1,4 @@
+#include <mcu/internal.h>
 #include <iostream>
 #include <functional>
 #include "mcu/nonew/function.h"
@@ -6,6 +7,10 @@
 
 #include "catch.hpp"
 #include "test-utils.h"
+
+#ifdef __GNUC__
+#pragma GCC diagnostic ignored "-Wparentheses"
+#endif
 
 using namespace mcu::nonew;
 using namespace std;
@@ -58,19 +63,18 @@ void require_all(List &list, E...es) {
 }
 
 template<typename List, typename ...E>
-void require_one(const List &list, int i) {
+void require_one(__unused const List &list, __unused int i) {
 }
 
 template<typename List, typename E, typename ...Es>
 void require_one(const List &list, int i, E e, Es...es) {
-    cout << "i=" << i << endl << flush;
     REQUIRE(list[i] == e);
     require_one(list, i + 1, es...);
 }
 
 template<typename queue>
 void print(queue &q) {
-    cout << "[";
+    cout << "queue = [";
     for (int i = 0; i < q.size(); i++) {
         if (i > 0) {
             cout << ", ";
