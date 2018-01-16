@@ -10,6 +10,12 @@
 namespace mcu {
 namespace arm {
 
+/**
+ * A BasicLockable.
+ * http://en.cppreference.com/w/cpp/concept/BasicLockable
+ */
+class mutex;
+
 #if __CORTEX_M >= 3U
 
 class mutex {
@@ -52,11 +58,9 @@ public:
     }
 };
 
-#else
+#endif
 
-//class mutex {
-//    static_assert(false, "mcu::arm::mutex is only supported on Cortex cores >= 3.");
-//};
+#if defined(__CORTEX_M) && __CORTEX_M < 3U
 
 /**
  * Not really tested
