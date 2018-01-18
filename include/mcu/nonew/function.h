@@ -38,7 +38,21 @@ public:
         assign(std::forward<Func>(func));
     }
 
-    function(const function &other) : valid_(other.valid_), storage_() {
+    function(const function &other) noexcept : valid_(other.valid_), storage_() {
+        MCU_LOG();
+        if (valid_) {
+            std::memcpy(storage_, other.storage_, alloc_size);
+        }
+    }
+
+    function(function &other) noexcept : valid_(other.valid_), storage_() {
+        MCU_LOG();
+        if (valid_) {
+            std::memcpy(storage_, other.storage_, alloc_size);
+        }
+    }
+
+    function(const function &&other) noexcept : valid_(other.valid_), storage_() {
         MCU_LOG();
         if (valid_) {
             std::memcpy(storage_, other.storage_, alloc_size);
@@ -75,19 +89,7 @@ public:
     }
 
     function &operator=(function &other) {
-        MCU_LOG();
-
-        if (&other == this) {
-            return *this;
-        }
-
-        destruct();
-        valid_ = other.valid_;
-        if (valid_) {
-            std::memcpy(storage_, other.storage_, alloc_size);
-        }
-
-        return *this;
+        return operator=(static_cast<const function>(other));
     }
 
     function &operator=(function &&other) {
@@ -142,18 +144,12 @@ private:
         return reinterpret_cast<const Invoker *>(storage_);
     }
 
-//    template<size_t A, size_t B>
-//    static void static_assert_le() {
-//        static_assert(A <= B, "Function to be assigned is too big");
-//    }
-
     template<typename Func>
     void assign(Func &&func) {
 
         typedef typename std::decay<Func>::type RealFunc;
         typedef FuncHolder <RealFunc> holder_t;
 
-//        static_assert(sizeof(holder_t) <= alloc_size, "Function to be assigned is too big");
         static_assert_ge<alloc_size, sizeof(holder_t)>();
         static_assert_ge<alloc_size, sizeof(RealFunc)>();
 
