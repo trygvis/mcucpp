@@ -100,15 +100,24 @@ TEST_CASE("function can be copied") {
 }
 
 TEST_CASE("function can be moved") {
-    auto l = [](){};
-    fn<void()> a, b(l);
+    {
+        fn<void()> to, from([](){});
 
-    // A function can be moved. The moved-from is invalidated.
-    REQUIRE_FALSE(a);
-    REQUIRE(b);
-    a = std::move(b);
-    REQUIRE(a);
-    REQUIRE_FALSE(b);
+        // A function can be moved. The moved-from is invalidated.
+        REQUIRE_FALSE(to);
+        REQUIRE(from);
+        to = std::move(from);
+        REQUIRE(to);
+        REQUIRE_FALSE(from);
+    }
+
+    {
+        fn<void()> from([]() {});
+
+        auto to(std::move(from));
+        REQUIRE(to);
+        REQUIRE_FALSE(from);
+    }
 }
 
 #if 0

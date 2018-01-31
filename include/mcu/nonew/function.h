@@ -52,11 +52,13 @@ public:
         }
     }
 
+    // TODO: this constructor shouldn't have been here.
     function(const function &&other) noexcept : valid_(other.valid_), storage_() {
         MCU_LOG();
         if (valid_) {
             std::memcpy(storage_, other.storage_, alloc_size);
         }
+        // TODO: there should have been an other.destruct() here.
     }
 
     function(function &&other) noexcept : valid_(other.valid_), storage_() {
@@ -64,6 +66,7 @@ public:
         if (valid_) {
             std::memcpy(storage_, other.storage_, alloc_size);
         }
+        other.destruct();
     }
 
     function &operator=(std::nullptr_t) {
@@ -89,7 +92,19 @@ public:
     }
 
     function &operator=(function &other) {
-        return operator=(static_cast<const function>(other));
+        MCU_LOG();
+
+        if (&other == this) {
+            return *this;
+        }
+
+        destruct();
+        valid_ = other.valid_;
+        if (valid_) {
+            std::memcpy(storage_, other.storage_, alloc_size);
+        }
+
+        return *this;
     }
 
     function &operator=(function &&other) {
