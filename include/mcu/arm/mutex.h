@@ -12,7 +12,10 @@ namespace arm {
 
 /**
  * A BasicLockable.
- * http://en.cppreference.com/w/cpp/concept/BasicLockable
+ *
+ * See http://en.cppreference.com/w/cpp/concept/BasicLockable
+ *
+ * __STREXB(value, address) returns 0 if the address has not been referenced since the previous __LDREXB().
  */
 class mutex;
 
