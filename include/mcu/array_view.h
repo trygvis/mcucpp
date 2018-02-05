@@ -19,6 +19,8 @@ class array_view {
 public:
     array_view(array_view &&other) noexcept : buf_(other.buf_), start_(other.start_), size_(other.size_) {}
 
+    array_view(const array_view &other) noexcept : buf_(other.buf_), start_(other.start_), size_(other.size_) {}
+
     array_view() : buf_(nullptr), start_(0), size_(0) {}
 
     array_view(const T *buf, int size) : buf_(buf), start_(0), size_(size) {}
@@ -41,6 +43,25 @@ public:
         }
 
         return {&buf_[start_ + start], end - start};
+    }
+
+    bool equals(const T *str)
+    {
+        for (int i = 0; i < size_; i++) {
+            T a = str[i];
+
+            if (a == '\0') {
+                return i == size_;
+            }
+
+            T b = buf_[start_ + i];
+
+            if (a != b) {
+                return false;
+            }
+        }
+
+        return str[size_] == '\0';
     }
 
     int index_of(T value) const
@@ -105,6 +126,14 @@ string_view make_string_view(const char *str)
 {
     auto len = static_cast<int>(std::strlen(str));
     return {str, len};
+}
+
+template<std::size_t N>
+__unused
+constexpr
+array_view<const char> make_string_view(const char array[N])
+{
+    return {array, N};
 }
 
 } // namespace mcu
