@@ -33,9 +33,13 @@ find_package(Doxygen
   OPTIONAL_COMPONENTS mscgen dia)
 
 if (DOXYGEN_FOUND)
+  set(DOXYGEN_EXAMPLE_PATH test)
+  set(DOXYGEN_EXCLUDE_PATTERNS catch.hpp)
+  set(DOXYGEN_WARN_IF_UNDOCUMENTED NO)
+
   doxygen_add_docs(
     doxygen
-    src include
+    src include test
     COMMENT "Generate man pages"
   )
 endif ()

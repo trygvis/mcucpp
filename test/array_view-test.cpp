@@ -9,10 +9,15 @@
 
 using namespace mcu;
 
-static int len(const char *s)
-{
-    return int(strlen(s));
+//! [String literal converted to array_view]
+bool is_2(string_view str) {
+    return str.size() == 2;
 }
+
+void foo() {
+    is_2("2");
+}
+//! [String literal converted to array_view]
 
 TEST_CASE("array_view")
 {
@@ -50,7 +55,7 @@ TEST_CASE("array_view::index_of")
 {
     const char data[] = "a bb ccc";
 
-    string_view v1{data, len(data)};
+    string_view v1{data};
     REQUIRE(v1.index_of(' ') == 1);
     REQUIRE(v1.index_of(' ', 1) == 1);
     REQUIRE(v1.index_of(' ', 2) == 4);

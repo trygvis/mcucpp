@@ -27,12 +27,12 @@ TEST_CASE("equals")
 {
     const char data[] = "1234567890\0";
 
-    REQUIRE(equals(make_string_view("123"), "123"));
-    REQUIRE(!equals(make_string_view("123 "), "123"));
-    REQUIRE(!equals(make_string_view("123"), "123 "));
+    REQUIRE(equals(string_view("123"), "123"));
+    REQUIRE(!equals(string_view("123 "), "123"));
+    REQUIRE(!equals(string_view("123"), "123 "));
 
-    REQUIRE(!equals(make_string_view("abc123xyz").slice(3, 6), "123 "));
-    REQUIRE(equals(make_string_view("abc123xyz").slice(3, 6), "123"));
+    REQUIRE(!equals(string_view("abc123xyz").slice(3, 6), "123 "));
+    REQUIRE(equals(string_view("abc123xyz").slice(3, 6), "123"));
 }
 
 TEST_CASE("bits")
