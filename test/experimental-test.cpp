@@ -35,6 +35,18 @@ TEST_CASE("equals")
     REQUIRE(equals(string_view("abc123xyz").slice(3, 6), "123"));
 }
 
+TEST_CASE("starts_with")
+{
+    string_view raw("---1234567890---");
+
+    auto x = raw.slice(3, 13);
+
+    REQUIRE(x.size() == 10);
+    REQUIRE(mcu::starts_with<char>(x, "123"));
+    REQUIRE_FALSE(mcu::starts_with<char>(x, "321"));
+    REQUIRE_FALSE(mcu::starts_with<char>(x, "1234567890abc"));
+}
+
 TEST_CASE("bits")
 {
     REQUIRE(bits::is_set(0x10, 4));

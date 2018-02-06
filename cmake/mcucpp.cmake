@@ -159,6 +159,8 @@ function(mcucpp_process_dotconfig)
 
     include/mcu/io/output_stream.h
     src/io/output_stream.cpp
+
+    src/experimental.cpp
   )
 
   if (CONFIG_)
