@@ -21,7 +21,7 @@ add_executable(tests
   test/util-value_to_int_t-test.cpp
 
   include/mcu/array_view.h
-  test/string_view-test.cpp
+  test/array_view-test.cpp
   )
 
 if (${CMAKE_COMPILER_IS_GNUCXX})
