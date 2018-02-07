@@ -26,15 +26,15 @@ public:
 
     array_view(const array_view &other) noexcept : buf_(other.buf_), start_(other.start_), size_(other.size_) {}
 
-    array_view() : buf_(nullptr), start_(0), size_(0) {}
+    array_view() noexcept : buf_(nullptr), start_(0), size_(0) {}
 
     template<std::size_t N>
     constexpr
-    array_view(const T (&buf)[N]) : buf_(buf), start_(0), size_(static_cast<int>(N - 1)) {}
+    array_view(const T (&buf)[N]) noexcept : buf_(buf), start_(0), size_(static_cast<int>(N - 1)) {}
 
-    array_view(const T *buf, int size) : buf_(buf), start_(0), size_(size) {}
+    array_view(const T *buf, int size) noexcept : buf_(buf), start_(0), size_(size) {}
 
-    array_view(const T *buf, int start, int size) : buf_(buf), start_(start), size_(size) {}
+    array_view(const T *buf, int start, int size) noexcept : buf_(buf), start_(start), size_(size) {}
 
     array_view slice(int start)
     {
