@@ -1,8 +1,7 @@
 #pragma once
 
-
-#include <mcu/init.h>
 #include <mcu/util.h>
+#include <mcu/nonew/function.h>
 #include <cstdio>
 #include <type_traits>
 
@@ -16,35 +15,36 @@ class timers {
     using bitmap_t = typename mcu::bitmap_t<Count>::type;
 
 public:
-    timers() : active_bitmap(0), earliest_time(0) {}
+    timers() : active_bitmap(0), next_expiry(0) {}
 
-    void once(int i, uint64_t time, const callback_t &callback)
+    void once(int i, uint64_t expiry, const callback_t &callback)
     {
-        times[i] = time;
+        expiry_times[i] = expiry;
         callbacks[i] = callback;
         active_bitmap |= 1 << i;
 
-        if (earliest_time == 0 || time < earliest_time) {
-            earliest_time = time;
+        if (next_expiry == 0 || expiry < next_expiry) {
+            next_expiry = expiry;
         }
 
         once_bitmap |= 1 << i;
     }
 
-    void repeat(int i, uint64_t time, const callback_t &callback)
+    void repeat(int i, uint64_t first_expiry, uint64_t interval, const callback_t &callback)
     {
-        times[i] = time;
+        expiry_times[i] = first_expiry;
+        interval_times[i] = interval;
         callbacks[i] = callback;
         active_bitmap |= 1 << i;
 
-        if (earliest_time == 0 || time < earliest_time) {
-            earliest_time = time;
+        if (next_expiry == 0 || first_expiry < next_expiry) {
+            next_expiry = first_expiry;
         }
     }
 
     void loop(uint64_t now)
     {
-        if (now >= earliest_time) {
+        if (now >= next_expiry) {
             execute_all_expired(now);
         }
     }
@@ -63,16 +63,20 @@ private:
         for (int i = 0; i < Count; i++) {
             auto mask = bitmap_t(1 << i);
 
-//            printf("timer %d, mask=%x, active=%d, once=%d, expired=%d\n", i, int(mask), active_bitmap & mask,
-//                   once_bitmap & mask, now <= times[i]);
+//            printf("timer %d, active=%d, once=%d, interval=%d, expired=%d\n", i,
+//                   active_bitmap & mask,
+//                   once_bitmap & mask,
+//                   int(once_bitmap & mask ? -1 : interval_times[i]),
+//                   now >= expiry_times[i]);
+
             if (!(active_bitmap & mask)) {
                 continue;
             }
 
-            auto time = times[i];
+            auto expiry = expiry_times[i];
 
 //            breakpoint();
-            if (now <= time) {
+            if (now < expiry) {
                 // Not expired yet
                 continue;
             }
@@ -84,21 +88,30 @@ private:
                 callbacks[i] = nullptr;
                 once_bitmap &= ~(1 << i);
                 active_bitmap &= ~(1 << i);
+            } else {
+                // Find next expiry time, skip any already missed timeouts
+                do {
+                    expiry += interval_times[i];
+                } while (expiry <= now);
+
+                expiry_times[i] = expiry;
             }
 
-            if (time < earliest) {
-                earliest = time;
+            if (earliest == 0 || expiry < earliest) {
+                earliest = expiry;
             }
         }
 
-        earliest_time = earliest;
+        next_expiry = earliest;
     }
 
     bitmap_t active_bitmap;
     bitmap_t once_bitmap;
-    uint64_t earliest_time;
+    uint64_t next_expiry;
 
-    uint64_t times[Count];
+    uint64_t expiry_times[Count];
+    uint64_t interval_times[Count];
+    uint64_t interval[Count];
     callback_t callbacks[Count];
 };
 
