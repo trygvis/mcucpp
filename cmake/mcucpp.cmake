@@ -77,7 +77,11 @@ function(mcucpp_create_kconfig_target)
   if (NOT ARGS_DOTCONFIG)
     set(DOTCONFIG "${CMAKE_CURRENT_LIST_DIR}/.config")
   else ()
-    set(DOTCONFIG "${ARGS_DOTCONFIG}")
+    if (IS_ABSOLUTE ARGS_DOTCONFIG)
+      set(DOTCONFIG "${ARGS_DOTCONFIG}")
+    else()
+      set(DOTCONFIG "${CMAKE_CURRENT_LIST_DIR}/${ARGS_DOTCONFIG}")
+    endif ()
   endif ()
 
   get_filename_component(DOTCONFIG_DIR "${DOTCONFIG}" DIRECTORY)
@@ -234,6 +238,13 @@ function(mcucpp_process_dotconfig)
       src/generic/putchar.cpp
       src/generic/puts.cpp
       src/stm32cube/stdout-impl.cpp)
+  endif ()
+
+  # Host
+  if (CONFIG_CHIP_FAMILY_HOST)
+    _mcucpp_append(
+        src/host/stdout-impl.cpp
+        src/io/serial_host.cpp)
   endif ()
 
   # Debugging

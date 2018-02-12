@@ -40,8 +40,13 @@ endmenu
 
 menu "stdio settings"
 
+config STDIO_ENABLE
+    bool "enable stdio target"
+
 choice STDIO_TARGET
     prompt "stdio target"
+
+    depends on STDIO_ENABLE
 
     config STDIO_TARGET_SEMIHOSTING
         depends on SEMIHOSTING
@@ -50,6 +55,14 @@ choice STDIO_TARGET
     config STDIO_TARGET_STM32CUBE_UART
         bool "STM32Cube UART"
         depends on CHIP_FAMILY_STM32
+
+    config STDIO_TARGET_NRF_LOG
+        bool "Use NRF_LOG macros"
+        depends on CHIP_FAMILY_NRF51 || CHIP_FAMILY_NRF52
+
+    config STDIO_TARGET_NRF_UART
+        bool "Use nRF5x UART"
+        depends on CHIP_FAMILY_NRF51 || CHIP_FAMILY_NRF52
 
 endchoice
 
