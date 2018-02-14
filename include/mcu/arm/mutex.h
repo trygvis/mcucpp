@@ -2,10 +2,7 @@
 
 #include <cstdint>
 #include "mcu/arm/core_x.h"
-
-#ifndef __always_inline
-#define __always_inline
-#endif
+#include "mcu/internal.h"
 
 namespace mcu {
 namespace arm {

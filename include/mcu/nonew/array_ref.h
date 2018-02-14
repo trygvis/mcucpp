@@ -1,5 +1,7 @@
 #pragma once
 
+#include "mcu/internal.h"
+
 namespace mcu {
 namespace nonew {
 
