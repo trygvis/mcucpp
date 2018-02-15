@@ -34,8 +34,9 @@ find_package(Doxygen
 
 if (DOXYGEN_FOUND)
   set(DOXYGEN_EXAMPLE_PATH test)
-  set(DOXYGEN_EXCLUDE_PATTERNS catch.hpp)
+  set(DOXYGEN_EXCLUDE_PATTERNS catch.hpp test-* *-test.cpp)
   set(DOXYGEN_WARN_IF_UNDOCUMENTED NO)
+  set(DOXYGEN_GENERATE_TREEVIEW YES)
 
   doxygen_add_docs(
     doxygen

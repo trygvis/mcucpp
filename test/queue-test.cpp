@@ -18,6 +18,29 @@ using namespace std;
 template<size_t Size>
 using queue_t = queue<string, Size, typename mcu::value_to_int_t<Size>::type, test_platform>;
 
+void repeat(int count, std::function<void(int)> f) {
+    for (int i = 0; i < count; i++) {
+        f(i);
+    }
+}
+
+template<typename List, typename ...E>
+void require_one(__unused const List &list, __unused int i) {
+}
+
+template<typename List, typename E, typename ...Es>
+void require_one(const List &list, int i, E e, Es...es) {
+    REQUIRE(list[i] == e);
+    require_one(list, i + 1, es...);
+}
+
+template<typename List, typename ...E>
+void require_all(List &list, E...es) {
+    REQUIRE(list.size() == sizeof...(es));
+
+    require_one(list, 0, es...);
+}
+
 TEST_CASE("queue") {
     queue_t<10> event_queue;
 
@@ -47,29 +70,6 @@ TEST_CASE("queue") {
         FAIL("Expected exception");
     } catch (expected_failure &) {
     }
-}
-
-void repeat(int count, std::function<void(int)> f) {
-    for (int i = 0; i < count; i++) {
-        f(i);
-    }
-}
-
-template<typename List, typename ...E>
-void require_all(List &list, E...es) {
-    REQUIRE(list.size() == sizeof...(es));
-
-    require_one(list, 0, es...);
-}
-
-template<typename List, typename ...E>
-void require_one(__unused const List &list, __unused int i) {
-}
-
-template<typename List, typename E, typename ...Es>
-void require_one(const List &list, int i, E e, Es...es) {
-    REQUIRE(list[i] == e);
-    require_one(list, i + 1, es...);
 }
 
 template<typename queue>
