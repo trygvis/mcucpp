@@ -9,6 +9,9 @@
 
 using namespace mcu;
 
+namespace mcu {
+namespace test {
+
 TEST_CASE("to_int")
 {
     const char data[] = "1234567890\0";
@@ -51,3 +54,6 @@ TEST_CASE("bits")
 {
     REQUIRE(bits::is_set(0x10, 4));
 }
+
+} // namespace test
+} // namespace mcu

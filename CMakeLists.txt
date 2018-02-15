@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.6)
 
-project(mcucpp C CXX ASM)
+project(mcucpp
+    LANGUAGES C CXX ASM
+    DESCRIPTION "C++ for Microcontrollers")
 
 include_directories(include)
 add_executable(tests
@@ -34,13 +36,13 @@ find_package(Doxygen
 
 if (DOXYGEN_FOUND)
   set(DOXYGEN_EXAMPLE_PATH test)
-  set(DOXYGEN_EXCLUDE_PATTERNS catch.hpp test-* *-test.cpp)
+  set(DOXYGEN_EXCLUDE_PATTERNS catch.hpp)
   set(DOXYGEN_WARN_IF_UNDOCUMENTED NO)
   set(DOXYGEN_GENERATE_TREEVIEW YES)
 
   doxygen_add_docs(
     doxygen
     src include test
-    COMMENT "Generate man pages"
+    COMMENT "Generate documentation"
   )
 endif ()

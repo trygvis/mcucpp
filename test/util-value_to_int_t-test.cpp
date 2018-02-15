@@ -2,6 +2,9 @@
 
 #include "catch.hpp"
 
+namespace mcu {
+namespace test {
+
 using std::is_same;
 using mcu::value_to_int_t;
 using mcu::value_to_uint_t;
@@ -29,3 +32,6 @@ TEST_CASE("value_to_uint_t")
     static_assert(is_same<value_to_uint_t<1'000'000'000>::type, uint32_t>::value, "");
     static_assert(is_same<value_to_uint_t<40'000'000'000>::type, uint64_t>::value, "");
 }
+
+} // namespace test
+} // namespace mcu

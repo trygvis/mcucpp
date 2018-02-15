@@ -12,6 +12,9 @@
 #pragma GCC diagnostic ignored "-Wparentheses"
 #endif
 
+namespace mcu {
+namespace test {
+
 using namespace mcu::nonew;
 using namespace std;
 
@@ -137,3 +140,6 @@ TEST_CASE("push and pop 2") {
     REQUIRE(q.front() == "4");
     q.pop_front();
 }
+
+} // namespace test
+} // namespace mcu

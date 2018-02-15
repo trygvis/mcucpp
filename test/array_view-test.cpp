@@ -9,6 +9,9 @@
 
 using namespace mcu;
 
+namespace mcu {
+namespace test {
+
 //! [String literal converted to array_view]
 bool is_2(string_view str) {
     return str.size() == 2;
@@ -67,3 +70,6 @@ TEST_CASE("array_view::index_of")
     REQUIRE(v2.index_of(' ', 3) == -1);
     REQUIRE(v2.index_of(' ', 4) == -1);
 }
+
+} // namespace test
+} // namespace mcu

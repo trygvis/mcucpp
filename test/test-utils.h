@@ -2,6 +2,9 @@
 
 #include "catch.hpp"
 
+namespace mcu {
+namespace test {
+
 extern bool expect_failure;
 
 struct expected_failure {
@@ -18,3 +21,6 @@ struct test_platform {
         }
     }
 };
+
+} // namespace test
+} // namespace mcu

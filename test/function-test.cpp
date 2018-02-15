@@ -16,6 +16,9 @@ using namespace mcu::nonew;
 using std::cout;
 using std::endl;
 
+namespace mcu {
+namespace test {
+
 template<typename Sig>
 using fn = function<Sig>;
 
@@ -148,3 +151,6 @@ TEST_CASE("function woot") {
     outer();
 }
 #endif
+
+} // namespace test
+} // namespace mcu
