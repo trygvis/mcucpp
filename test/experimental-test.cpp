@@ -30,24 +30,33 @@ TEST_CASE("equals")
 {
     const char data[] = "1234567890\0";
 
-    REQUIRE(equals(string_view("123"), "123"));
-    REQUIRE(!equals(string_view("123 "), "123"));
-    REQUIRE(!equals(string_view("123"), "123 "));
+    REQUIRE(equals(make_string_view("123"), "123"));
+    REQUIRE(!equals(make_string_view("123 "), "123"));
+    REQUIRE(!equals(make_string_view("123"), "123 "));
 
-    REQUIRE(!equals(string_view("abc123xyz").slice(3, 6), "123 "));
-    REQUIRE(equals(string_view("abc123xyz").slice(3, 6), "123"));
+    REQUIRE(!equals(make_string_view("abc123xyz").slice(3, 6), "123 "));
+    REQUIRE(equals(make_string_view("abc123xyz").slice(3, 6), "123"));
 }
 
 TEST_CASE("starts_with")
 {
-    string_view raw("---1234567890---");
+    auto raw = make_string_view("---1234567890---");
 
     auto x = raw.slice(3, 13);
 
     REQUIRE(x.size() == 10);
-    REQUIRE(mcu::starts_with<char>(x, "123"));
-    REQUIRE_FALSE(mcu::starts_with<char>(x, "321"));
-    REQUIRE_FALSE(mcu::starts_with<char>(x, "1234567890abc"));
+    REQUIRE(mcu::starts_with<char>(x, make_string_view("123")));
+    REQUIRE_FALSE(mcu::starts_with<char>(x, make_string_view("321")));
+    REQUIRE_FALSE(mcu::starts_with<char>(x, make_string_view("1234567890abc")));
+}
+
+TEST_CASE("contains")
+{
+    auto raw = make_string_view("---1234567890---");
+
+    REQUIRE(mcu::contains(raw, make_string_view("123")));
+    REQUIRE_FALSE(mcu::contains(raw, make_string_view("abc")));
+    REQUIRE_FALSE(mcu::contains(make_string_view(""), make_string_view("123")));
 }
 
 TEST_CASE("bits")

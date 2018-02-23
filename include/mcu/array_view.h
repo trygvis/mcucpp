@@ -28,15 +28,11 @@ public:
 
     array_view() noexcept : buf_(nullptr), start_(0), size_(0) {}
 
-    template<std::size_t N>
-    constexpr
-    array_view(const T (&buf)[N]) noexcept : buf_(buf), start_(0), size_(static_cast<int>(N - 1)) {}
-
     array_view(const T *buf, int size) noexcept : buf_(buf), start_(0), size_(size) {}
 
     array_view(const T *buf, int start, int size) noexcept : buf_(buf), start_(start), size_(size) {}
 
-    array_view slice(int start)
+    array_view slice(int start) const
     {
         if (start >= size_) {
             return std::move(array_view{0, 0, 0});
@@ -45,7 +41,7 @@ public:
         return array_view{&buf_[start_ + start], size_ - start};
     }
 
-    array_view slice(int start, int end)
+    array_view slice(int start, int end) const
     {
         if (start >= end) {
             return {};
@@ -100,14 +96,22 @@ public:
     }
 };
 
+// This is probably a bad idea, "strings" imply zero-termination.
 using string_view = array_view<char>;
 
 __unused
 static
-string_view make_string_view(const char *str)
+string_view make_string_view(const char *str) noexcept
 {
     auto len = static_cast<int>(std::strlen(str));
     return {str, len};
+}
+
+template<std::size_t N>
+__unused static constexpr
+string_view make_string_view(const char (&str)[N]) noexcept
+{
+    return {str, static_cast<int>(N - 1)};
 }
 
 } // namespace mcu

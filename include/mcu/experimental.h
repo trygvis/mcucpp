@@ -6,7 +6,7 @@ namespace mcu {
 
 int to_int(const array_view<char> &str);
 
-bool equals(const string_view&, const char *);
+bool equals(const string_view &, const char *);
 
 template<typename T>
 bool starts_with(const array_view<T> &a_view, const array_view<T> &b_view)
@@ -24,6 +24,25 @@ bool starts_with(const array_view<T> &a_view, const array_view<T> &b_view)
     }
 
     return true;
+}
+
+template<typename T>
+bool contains(const array_view<T> &haystack, const array_view<T> &needle)
+{
+    int nz = needle.size();
+    if (nz > haystack.size()) {
+        return false;
+    }
+
+    auto end = haystack.size() - nz;
+    for (int i = 0; i < end; i++) {
+        auto idx = haystack.index_of(needle.data()[0], i);
+        if (idx != -1 && starts_with(haystack.slice(idx), needle)) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 #ifdef CONFIG_ARM

@@ -18,7 +18,7 @@ bool is_2(string_view str) {
 }
 
 void foo() {
-    is_2("2");
+    is_2(make_string_view("2"));
 }
 //! [String literal converted to array_view]
 
@@ -56,14 +56,12 @@ TEST_CASE("array_view::slice")
 
 TEST_CASE("array_view::index_of")
 {
-    const char data[] = "a bb ccc";
-
-    string_view v1{data};
+    auto v1 = make_string_view("a bb ccc");
     REQUIRE(v1.index_of(' ') == 1);
     REQUIRE(v1.index_of(' ', 1) == 1);
     REQUIRE(v1.index_of(' ', 2) == 4);
 
-    string_view v2 = v1.slice(2, 5);
+    auto v2 = v1.slice(2, 5);
     REQUIRE(v2.index_of(' ') == 2);
     REQUIRE(v2.index_of(' ', 1) == 2);
     REQUIRE(v2.index_of(' ', 2) == 2);
