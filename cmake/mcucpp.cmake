@@ -243,8 +243,7 @@ function(mcucpp_process_dotconfig)
   # Host
   if (CONFIG_CHIP_FAMILY_HOST)
     _mcucpp_append(
-        src/host/stdout-impl.cpp
-        src/io/serial_host.cpp)
+        src/host/stdout-impl.cpp)
   endif ()
 
   # Debugging
