@@ -6,23 +6,13 @@
 
 #include <mcu/util.h>
 
-extern "C"
-__attribute__((noreturn))
-int halt();
-
 namespace mcu {
+
+class platform;
+
 namespace nonew {
 
-struct mcu_default_platform {
-    static
-    void check(bool ok) {
-        if (!ok) {
-            ::halt();
-        }
-    }
-};
-
-template<typename T, size_t Capacity_, typename idx_t = typename mcu::value_to_int_t<Capacity_>::type, typename platform = mcu_default_platform>
+template<typename T, size_t Capacity_, typename idx_t = typename mcu::value_to_int_t<Capacity_>::type, typename platform = mcu::platform>
 class queue {
 public:
     using element_type = T;
