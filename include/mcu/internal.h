@@ -10,8 +10,24 @@
 #define __unused
 #endif
 
+#endif // __unused
+
 #ifndef __always_inline
+
+#if defined(__GNUC__)
+#define __always_inline __attribute__((always_inline))
+#else
 #define __always_inline
 #endif
 
+#endif // __always_inline
+
+#ifndef __noinline
+
+#if defined(__GNUC__)
+#define __noinline __attribute__((noinline))
+#else
+#define __noinline
 #endif
+
+#endif // __noinline
